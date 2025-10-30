@@ -1,4 +1,4 @@
-require('dotenv').config(); // Load environment variables from .env
+require('dotenv').config(); 
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
@@ -6,12 +6,12 @@ app.use(express.json());
 
 console.log("MONGO_URI:", process.env.MONGO_URI);
 
-// Connect to MongoDB
+
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("Connected to MongoDB"))
     .catch(err => console.error("Could not connect to MongoDB", err));
 
-// Define the Booking Schema
+
 const bookingSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, match: /^\S+@\S+\.\S+$/, trim: true },
@@ -20,20 +20,20 @@ const bookingSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-// Create the Booking Model
+
 const Booking = mongoose.model('Booking', bookingSchema);
 
-// Define the Event Schema
+
 const eventSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true },
     date: { type: Date, required: true },
     seatsAvailable: { type: Boolean, required: true }
 });
 
-// Create the Event Model
+
 const Event = mongoose.model('Event', eventSchema);
 
-// Validate Booking Input
+
 function validateBookingInput(req, res) {
     const { name, email, event } = req.body;
     if (!name || typeof name !== 'string' || name.trim() === '') {
@@ -50,7 +50,7 @@ function validateBookingInput(req, res) {
 
 // Routes for Bookings
 
-// 1. GET /api/bookings - Get all bookings
+
 app.get('/api/bookings', async (req, res) => {
     try {
         const bookings = await Booking.find();
@@ -60,7 +60,7 @@ app.get('/api/bookings', async (req, res) => {
     }
 });
 
-// 2. POST /api/bookings - Create a new booking
+
 app.post('/api/bookings', async (req, res) => {
     const validationError = validateBookingInput(req, res);
     if (validationError) return;
@@ -74,7 +74,7 @@ app.post('/api/bookings', async (req, res) => {
     }
 });
 
-// 3. GET /api/bookings/:id - Get booking by ID
+
 app.get('/api/bookings/:id', async (req, res) => {
     try {
         const booking = await Booking.findById(req.params.id);
@@ -88,7 +88,7 @@ app.get('/api/bookings/:id', async (req, res) => {
     }
 });
 
-// 4. PUT /api/bookings/:id - Update participant details
+
 app.put('/api/bookings/:id', async (req, res) => {
     const validationError = validateBookingInput(req, res);
     if (validationError) return;
@@ -109,7 +109,7 @@ app.put('/api/bookings/:id', async (req, res) => {
     }
 });
 
-// 5. DELETE /api/bookings/:id - Delete/cancel booking
+
 app.delete('/api/bookings/:id', async (req, res) => {
     try {
         const deletedBooking = await Booking.findByIdAndDelete(req.params.id);
@@ -123,7 +123,7 @@ app.delete('/api/bookings/:id', async (req, res) => {
     }
 });
 
-// 6. GET /api/bookings/search?email=xyz - Search booking by email
+
 app.get('/api/bookings/search', async (req, res) => {
     const { email } = req.query;
     if (!email) {
@@ -142,7 +142,7 @@ app.get('/api/bookings/search', async (req, res) => {
     }
 });
 
-// 7. GET /api/bookings/filter?event=Synergia - Filter bookings by event
+
 app.get('/api/bookings/filter', async (req, res) => {
     const { event } = req.query;
     if (!event) {
@@ -161,12 +161,12 @@ app.get('/api/bookings/filter', async (req, res) => {
     }
 });
 
-// Routes for Events
+
 app.get('/events', async (req, res) => {
     try {
         const { date, seatsAvailable, sort } = req.query;
 
-        // Build the query object
+        
         const query = {};
         if (date) {
             // Validate date format
@@ -179,12 +179,12 @@ app.get('/events', async (req, res) => {
             query.seatsAvailable = seatsAvailable === 'true';
         }
 
-        // Execute the query
+        
         let events = Event.find(query);
 
         // Apply sorting if requested
         if (sort === 'name') {
-            events = events.sort({ name: 1 }); // Sort alphabetically by name
+            events = events.sort({ name: 1 }); 
         }
 
         const result = await events;
@@ -194,7 +194,7 @@ app.get('/events', async (req, res) => {
     }
 });
 
-// Add Sample Events (Optional)
+
 app.post('/events/sample', async (req, res) => {
     const sampleEvents = [
         { name: "JavaScript Workshop", date: "2025-10-30", seatsAvailable: true },
@@ -205,5 +205,5 @@ app.post('/events/sample', async (req, res) => {
     res.send("Sample events added.");
 });
 
-// Start the Server
+
 app.listen(5000, () => console.log("Server running on port 5000"));
